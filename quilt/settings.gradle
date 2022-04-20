@@ -1,0 +1,26 @@
+pluginManagement {
+	repositories {
+		maven {
+			name = 'Quilt'
+			url = 'https://maven.quiltmc.org/repository/release'
+		}
+		maven {
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+		gradlePluginPortal()
+	}
+}
+dependencyResolutionManagement {
+	versionCatalogs {
+		libs {
+			from(files("../gradle/libs.versions.toml"))
+		}
+	}
+}
+includeBuild("../fabric") {
+	name = "fabric"
+	dependencySubstitution {
+		substitute module("fabric:fabricProject") using project(":")
+	}
+}

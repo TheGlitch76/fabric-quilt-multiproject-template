@@ -1,0 +1,39 @@
+{
+	"schema_version": 1,
+	"quilt_loader": {
+		"group": "com.example",
+		"id": "example_mod_quilt",
+		"version": "${version}",
+		"load_type": "always",
+		"metadata": {
+			"name": "Mod Name",
+			"description": "A short description of your mod.",
+			"contributors": {
+				"Your name here": "Owner"
+			},
+			"contact": {
+				"homepage": "https://example.com/"
+			},
+			"icon": "assets/example_mod_quilt/icon.png"
+		},
+		"intermediate_mappings": "net.fabricmc:intermediary",
+		"entrypoints": {
+			"init": "com.example.example_mod.quilt.ExampleModQuilt"
+		},
+		"depends": [
+			{
+				"id": "quilt_loader",
+				"versions": ">=0.18.3-"
+			},
+			{
+				"id": "quilted_fabric_api",
+				"versions": ">=5.0.0-"
+			},
+			{
+				"id": "example_mod",
+				"versions": "=1.0.0"
+			}
+		]
+	},
+	"mixin": "example_mod_quilt.mixins.json"
+}

@@ -1,0 +1,51 @@
+plugins {
+	id("maven-publish")
+}
+
+group = project.maven_group
+
+// This helps ensure that you don't forget to use dependsOnJars() and accidentally do something with stale jars.
+file("build/multiproject").deleteDir()
+
+def finalJar = tasks.register("finalJar", org.gradle.jvm.tasks.Jar) {
+	from zipTree { "build/multiproject/fabric.jar" }
+	from "build/multiproject/quilt.jar"
+	archiveBaseName.set(project.name)
+	archiveVersion.set(project.version)
+	destinationDirectory.set(file("build/libs"))
+}
+
+finalJar.get().dependsOn(gradle.includedBuild("fabric").task(":copyFabricJar"))
+finalJar.get().dependsOn(gradle.includedBuild("quilt").task(":copyQuiltJar"))
+
+publishing {
+	// Loom automatically strips the "jars" entry from dependencies, meaning that the quilt JiJ will never be loaded.
+	// Instead, users on quilt must add the quilt module as an extra dependency.
+	publications {
+		fabric(MavenPublication) {
+			artifact "build/multiproject/fabric.jar"
+			setArtifactId(project.archives_base_name)
+		}
+		quilt(MavenPublication) {
+			artifact "build/multiproject/quilt.jar"
+			setArtifactId(project.archives_base_name + "-quilt")
+		}
+	}
+
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+	repositories {
+		// Add repositories to publish to here.
+		// Notice: This block does NOT have the same function as the block in the top level.
+		// The repositories here will be used for publishing your artifact, not for
+		// retrieving dependencies.
+	}
+}
+dependOnJars(tasks.getByName("publishFabricPublicationToMavenLocal"))
+dependOnJars(tasks.getByName("publishQuiltPublicationToMavenLocal"))
+
+
+// Used any time a task depends on the output the subprojects.
+def dependOnJars(Task task) {
+	task.dependsOn(gradle.includedBuild("fabric").task(":copyFabricJar"))
+	task.dependsOn(gradle.includedBuild("quilt").task(":copyQuiltJar"))
+}
