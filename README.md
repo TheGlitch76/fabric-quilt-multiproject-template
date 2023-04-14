@@ -1,29 +1,43 @@
-# Quilt Template Mod
+# Fabric-Quilt Multiproject Template
 
-The official Quilt template mod. You can use it as a template for your own mods!
+If you want to make a mod that is compatible with both Fabric and Quilt, you should just write a Fabric mod.
+Most people do not need this template. However, for those who must travel the seas of Quilt, but are still unwavering 
+in their insistence to stick to Fabric compatability, this template begrudgingly has your back.
 
-## Usage
+Since our official stance is that if you want to benefit from Quilt-specific APIs, you should just write a Quilt mod, you will find few friends along your path.
+Once complete, this template will not be kept up to date unless absolutely necessary;
+it will only be updated when something breaks with a non-obvious solution.
 
-In order to use this mod as a template:
+While neither modloader is hostile to mods written for both Fabric and Quilt,
+it's not an intended use-case on either project's tooling. Quilt will make an effort to keep it possible, 
+but it is not a priority. Things might break at any time and you may be forced to use an entirely different approach.
 
-1. Create a new repository from this template with `Use this template`
-2. Clone the recently-created repo on your PC
-3. Make the necessary changes in order to make it yours:
-    - Update `gradle.properties` in order to use your Maven group and mod ID
-        - If you don't know which Maven group to use, and you are planning to host the mod's source code on GitHub, use `io.github.<Your_Username_Here>`
-    - Update `quilt.mod.json` in order to reflect your mod's metadata
-        - If you are planning to include (jar-in-jar) a mod, don't forget to declare its dependency on it!
-        - The icon provided here is a placeholder one. If you aren't able to replace it yet, you can delete it and remove the "icon" property
-    - Create a LICENSE file for this mod! If you don't know which license to use, check out [here](https://choosealicense.com/).
-        - If you use `LICENSE.md`, don't forget to update the buildscript in order to use that file name!
-        - In `quilt.mod.json`, don't forget to put the license's [SPDX identifier](https://spdx.org/licenses/) under the `"license"` property in `"metadata"`.
-        - The GPLv3 and AGPLv3 are not valid mod licenses, so you can use almost any license except for those.
-    - Update the Java sub-directory structure so it reflects your Maven group
-    - If the dependencies on `gradle/libs.versions.toml` isn't up-to-date, feel free to update them! The [linked utility](https://lambdaurora.dev/tools/import_quilt.html) should help you in this easy and quick process.
-4. The mod is now ready to be worked on!
+**You should probably just pick one mod loader.**
 
-## License
+---
 
-This template on the QuiltMC GitHub is licensed under the [Creative Common Zero v1.0 license](./LICENSE-TEMPLATE.md).
+# About this template
+This project template is an opinionated way for a **Fabric mod to provide Quilt-specific extensions**,
+like adding compatability with Quilt-only mods or, for those sailing the dangerous waters of modloader internals and incompatibilities, writing Quilt-specific hacks.
 
-Mods created with this template are not automatically licensed under the CC0, and are not required to give any kind of credit back to QuiltMC for this template.
+It is structured as three completely separate projects:
+1. The `fabric` project, holding the Fabric mod where the majority of your code goes.
+2. The `quilt` project, holding the **different** Quilt mod where your specific compatibility code goes.
+3. The root project, where the `quilt` mod is added as a jar-in-jar to the fabric project, and all publication is handled.
+
+Note that the `fabric` and `quilt` projects are NOT subprojects in the traditional sense; they each have their own
+`settings.gradle` and are only used together with `includeBuild`. Each project is fully isolated from the other, preventing
+classpath or setting pollution from either Quilt or Fabric tooling.
+
+# Who this project is for
+TODO. tl;dr anyone who needs a significant amount of quilt-specific code, but for whom reflection isnt an option
+
+# Design motivations
+TODO.
+tl;dr: this is a setup that is pretty much guaranteed to never break. it doesn't use anything which could ever cause problems
+like having both a QMJ and FMJ, mixing quilt + fabric loom, etc. while it comes with its own complexity, you never need to
+worry about future versions introducing bugs/incompatibilities/incomplete features which break your mod
+
+# Future considerations
+- Convention plugin/similar for common gradle code
+- Move publication back to the `quilt` and `fabric` projects, create a task in the root project to call each publish task
